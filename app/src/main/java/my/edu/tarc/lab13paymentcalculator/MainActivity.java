@@ -1,5 +1,7 @@
 package my.edu.tarc.lab13paymentcalculator;
 
+import android.content.Intent;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,6 +10,8 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String LOAN_PAYMENT = "payment";
+    public static final String LOAN_STATUS = "status";
     private EditText editTextSalary, editTextPrice, editTextDownPayment, editTextIRate, editTextRepaymentMonth;
     private TextView textViewResult;
 
@@ -24,8 +28,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void calculateMonthlyPayment(View view){
+
         double salary, price, downPayment, rate, month;
         double interest, totalPay, monthlyPay;
+        String status = new String();
 
         salary = Double.parseDouble(editTextSalary.getText().toString());
         price = Double.parseDouble(editTextPrice.getText().toString());
@@ -39,11 +45,22 @@ public class MainActivity extends AppCompatActivity {
         monthlyPay = totalPay/month;
 
         if(monthlyPay/salary<0.3){
-            textViewResult.setText(String.format("Month Payment: RM%.2f\nYou are eligible to apply for a loan.",monthlyPay ));
+            status = "Approved";
         }
         else {
-            textViewResult.setText(String.format("Month Payment: RM%.2f\nYou are not eligible to apply for a loan because you are too poor.",monthlyPay ));
+            status = "Rejected";
         }
+
+        //Define an Intent object
+        //This is an Explicit intent
+
+        Intent intent = new Intent(this, ResultActivity.class);
+        //Use the putExtra method to pass data
+        //format: putExtra(TAG, value)
+        intent.putExtra(LOAN_PAYMENT, monthlyPay);
+        intent.putExtra(LOAN_STATUS, status);
+        startActivity(intent);
+
     }
 
     protected void resetFields(View view){
